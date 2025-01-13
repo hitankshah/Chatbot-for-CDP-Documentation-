@@ -1,7 +1,7 @@
-
 Chatbot for CDP Documentation
 =============================
-
+![CDP Chatbot Screenshot](images/image.png),(images/screenshot1.png),
+(images/ss2.png)
 **Overview:**
 
 This project provides a chatbot capable of answering questions related to four Customer Data Platform (CDP) documentations: Segment, mParticle, Lytics, and Zeotap. The chatbot retrieves relevant information from these documentations to assist users with their queries.
@@ -22,8 +22,8 @@ Installation Steps
 
 **1\. Clone the Repository**
 
-git clone <repository-url>
-cd <repository-folder>
+git clonehttps://github.com/hitankshah/Chatbot-for-CDP-Documentation-
+cd Chatbot-for-CDP-Documentation-
     
 
 **2\. Create a Virtual Environment (Optional but recommended)**
@@ -39,8 +39,9 @@ python -m pip install --upgrade pip
 
 **4\. Install Dependencies**
 
-pip install flask beautifulsoup4 requests sentence-transformers torch==2.4.1 torchvision==0.19.1
-    
+pip install flask beautifulsoup4 requests sentence-transformers torch==2.4.1 torchvision==0.19.1  
+or 
+pip install -r requirements.txt
 
 **5\. Run the Application**
 
