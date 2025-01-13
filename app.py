@@ -45,8 +45,7 @@ documentation_urls = {
     },
     "Zeotap": {
         "main": "https://docs.zeotap.com/home/en-us/",
-        "sub_pages": [
-        ]
+        "sub_pages": []
     }
 }
 
@@ -55,7 +54,6 @@ last_fetch_time = None
 CACHE_DURATION = 3600  
 
 def fetch_page_content(url, headers=None):
-
     if not headers:
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
@@ -182,7 +180,7 @@ def ask_question():
         if "compare" in user_query.lower():
             # Handle comparison queries
             cdps_mentioned = [cdp for cdp in documentation_urls.keys() 
-                            if cdp.lower() in user_query.lower()]
+                              if cdp.lower() in user_query.lower()]
             
             if len(cdps_mentioned) < 2:
                 return jsonify({
@@ -192,7 +190,7 @@ def ask_question():
             results = search_documentation(user_query, {cdp: docs[cdp] for cdp in cdps_mentioned})
             
             if "error" in results:
-                return jsonify({"response": f"Error performing comparison: {results['error']}"})
+                return jsonify({"response": f"Error performing comparison: {results['error']}"}))
             
             response = "Comparison Results:\n\n"
             for cdp, result in results.items():
@@ -203,7 +201,7 @@ def ask_question():
             results = search_documentation(user_query, docs)
             
             if "error" in results:
-                return jsonify({"response": f"Error finding answer: {results['error']}"})
+                return jsonify({"response": f"Error finding answer: {results['error']}"}))
             
             response = "Here's what I found:\n\n"
             for cdp, result in results.items():
