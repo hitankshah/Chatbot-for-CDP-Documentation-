@@ -1,6 +1,8 @@
 Chatbot for CDP Documentation
 =============================
-![CDP Chatbot Screenshot] (https://github.com/hitankshah/Chatbot-for-CDP-Documentation-/blob/master/images/image.png)
+![CDP Chatbot Screenshot](images/image.png)
+![CDP Chatbot Screenshot 1](images/screenshot1.png)
+![CDP Chatbot Screenshot 2](images/ss2.png)
 **Overview:**
 
 This project provides a chatbot capable of answering questions related to four Customer Data Platform (CDP) documentations: Segment, mParticle, Lytics, and Zeotap. The chatbot retrieves relevant information from these documentations to assist users with their queries.
