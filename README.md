@@ -1,7 +1,7 @@
 Chatbot for CDP Documentation
 =============================
 ![CDP Chatbot Screenshot](images/image.png)
-![CDP Chatbot Screenshot 1](images/screenshot1.png)
+![CDP Chatbot Screenshot 1](images/screenshort1.png)
 ![CDP Chatbot Screenshot 2](images/ss2.png)
 **Overview:**
 
