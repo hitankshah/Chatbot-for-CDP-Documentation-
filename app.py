@@ -24,7 +24,6 @@ documentation_urls = {
     "Segment": {
         "main": "https://segment.com/docs/connections/spec/",
         "sub_pages": [
-            "https://segment.com/docs/connections/sources/catalog/libraries/website/javascript/tracking-api/",
             "https://segment.com/docs/connections/sources/catalog/libraries/server/http-api/",
             "https://segment.com/docs/connections/destinations/catalog/",
             "https://segment.com/docs/privacy/gdpr/"
@@ -190,7 +189,7 @@ def ask_question():
             results = search_documentation(user_query, {cdp: docs[cdp] for cdp in cdps_mentioned})
             
             if "error" in results:
-                return jsonify({"response": f"Error performing comparison: {results['error']}"}))
+                return jsonify({"response": f"Error performing comparison: {results['error']}"})
             
             response = "Comparison Results:\n\n"
             for cdp, result in results.items():
@@ -201,7 +200,7 @@ def ask_question():
             results = search_documentation(user_query, docs)
             
             if "error" in results:
-                return jsonify({"response": f"Error finding answer: {results['error']}"}))
+                return jsonify({"response": f"Error finding answer: {results['error']}"})
             
             response = "Here's what I found:\n\n"
             for cdp, result in results.items():
@@ -216,7 +215,6 @@ def ask_question():
             "response": "An error occurred while processing your request. Please try again."
         })
 
-# Creating two paragraphs with all the URLs formatted into them
 paragraph_one = f"""Segment documentation: {documentation_urls['Segment']['main']}, 
 mParticle documentation: {documentation_urls['mParticle']['main']}, 
 Lytics documentation: {documentation_urls['Lytics']['main']}."""
@@ -227,7 +225,6 @@ mParticle sub-pages: {', '.join(documentation_urls['mParticle']['sub_pages'])},
 Lytics sub-pages: {', '.join(documentation_urls['Lytics']['sub_pages'])}, 
 Zeotap sub-pages: {', '.join(documentation_urls['Zeotap']['sub_pages'])}."""
 
-# Output the two paragraphs
 print(paragraph_one)
 print(paragraph_two)
 
