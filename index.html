@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zeotap CDP Assistant</title>
+    <style>
+        :root {
+            --primary-color: #2E5BFF;
+            --secondary-color: #F6F8FF;
+            --accent-color: #FF6B6B;
+            --text-color: #2D3748;
+            --light-gray: #EDF2F7;
+            --border-radius: 12px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--secondary-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            min-height: 100vh;
+            color: var(--text-color);
+        }
+
+        #sidebar {
+            width: 250px;
+            background-color: white;
+            padding: 20px;
+            border-right: 1px solid var(--light-gray);
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.08);
+            position: fixed;
+        }
+
+        #sidebar h3 {
+            margin: 0;
+            color: var(--primary-color);
+        }
+
+        #sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #sidebar ul li {
+            margin-bottom: 10px;
+            cursor: pointer;
+            color: var(--primary-color);
+        }
+
+        #chat-container {
+            margin-left: 260px;
+            width: calc(100% - 260px);
+            max-width: 800px;
+            background: white;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border-radius: var(--border-radius);
+            flex-grow: 1;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .logo {
+            height: 40px;
+            margin-right: 16px;
+        }
+
+        .header-text {
+            flex-grow: 1;
+        }
+
+        .header-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin: 0;
+            color: var(--primary-color);
+        }
+
+        .header-subtitle {
+            font-size: 14px;
+            color: #666;
+            margin: 4px 0 0 0;
+        }
+
+        #chatbox {
+            width: 120%;
+            height: 500px;
+            margin-bottom: 20px;
+            overflow-y: auto;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            background: var(--secondary-color);
+            border: 1px solid var(--light-gray);
+        }
+
+        .input-container {
+            display: flex;
+            gap: 12px;
+            background: white;
+            padding: 8px;
+            border: 1px solid var(--light-gray);
+            border-radius: var(--border-radius);
+        }
+
+        #user-input {
+            flex-grow: 1;
+            padding: 16px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            background: var(--secondary-color);
+            color: var(--text-color);
+        }
+
+        #user-input:focus {
+            outline: none;
+            background: white;
+            box-shadow: 0 0 0 2px var(--primary-color);
+        }
+
+        #send-button {
+            padding: 12px 28px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background-color 0.2s ease;
+        }
+
+        #send-button:hover {
+            background: #1E3FCC;
+        }
+
+        #send-button:disabled {
+            background: #CBD5E0;
+            cursor: not-allowed;
+        }
+
+        .message {
+            margin-bottom: 16px;
+            padding: 12px 16px;
+            border-radius: var(--border-radius);
+            max-width: 80%;
+            line-height: 1.5;
+        }
+
+        .user-message {
+            background: var(--primary-color);
+            color: white;
+            margin-left: auto;
+            border-radius: 16px 16px 0 16px;
+        }
+
+        .bot-message {
+            background: white;
+            border: 1px solid var(--light-gray);
+            margin-right: auto;
+            border-radius: 16px 16px 16px 0;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 12px 16px;
+            background: white;
+            border-radius: var(--border-radius);
+            margin-bottom: 16px;
+            width: fit-content;
+        }
+
+        .typing-indicator span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            margin-right: 4px;
+            animation: typing 1s infinite ease-in-out;
+        }
+
+        @keyframes typing {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+    </style>
+</head>
+<body>
+    <div id="sidebar">
+        <h3>Previous Searches</h3>
+        <ul id="search-history"></ul>
+    </div>
+    <div id="chat-container">
+        <div class="header">
+            <img src="data:image/jpeg;base64,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" alt="Zeotap Logo" class="logo">
+            <div class="header-text">
+                <h1 class="header-title">Zeotap CDP Assistant</h1>
+                <p class="header-subtitle">Ask me anything about CDP implementations and comparisons</p>
+            </div>
+        </div>
+        <div id="chatbox"></div>
+        <div class="typing-indicator">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="input-container">
+            <input type="text" id="user-input" placeholder="Ask how to use Zeotap CDP or compare with other platforms..." />
+            <button id="send-button">Send</button>
+        </div>
+    </div>
+
+    <script>
+        const chatbox = document.getElementById('chatbox');
+        const userInput = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-button');
+        const typingIndicator = document.querySelector('.typing-indicator');
+        const searchHistory = document.getElementById('search-history');
+
+        function addMessage(text, isUser) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+
+            // Split long text into paragraphs
+            const paragraphs = splitIntoParagraphs(text);
+            paragraphs.forEach(paragraph => {
+                const p = document.createElement('p');
+                p.textContent = paragraph;
+                messageDiv.appendChild(p);
+            });
+
+            chatbox.appendChild(messageDiv);
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const message = userInput.value.trim();
+            if (!message) return;
+
+            addMessage(message, true);
+            userInput.value = '';
+            userInput.disabled = true;
+            sendButton.disabled = true;
+            typingIndicator.style.display = 'block';
+
+            // Save search to history
+            const searchItem = document.createElement('li');
+            searchItem.textContent = message;
+            searchHistory.appendChild(searchItem);
+
+            try {
+                const response = await fetch('/ask', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: message })
+                });
+                const data = await response.json();
+                typingIndicator.style.display = 'none';
+                addMessage(data.response, false);
+            } catch (error) {
+                typingIndicator.style.display = 'none';
+                addMessage('Sorry, an error occurred while processing your request.', false);
+            }
+
+            userInput.disabled = false;
+            sendButton.disabled = false;
+            userInput.focus();
+        }
+
+        sendButton.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        addMessage('Welcome to Zeotap CDP Assistant! I can help you understand how to use Zeotap CDP and compare it with other platforms. What would you like to know?', false);
+
+        // Function to split text into paragraphs based on word count
+        function splitIntoParagraphs(text) {
+            const maxWords = 500; // Max words per paragraph
+            const words = text.split(' ');
+            const paragraphs = [];
+            
+            for (let i = 0; i < words.length; i += maxWords) {
+                const paragraph = words.slice(i, i + maxWords).join(' ');
+                paragraphs.push(paragraph);
+            }
+            return paragraphs;
+        }
+    </script>
+</body>
+</html>
