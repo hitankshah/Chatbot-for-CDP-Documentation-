@@ -7,12 +7,19 @@ import logging
 import time
 from urllib.parse import urljoin
 import torch
+import os
 
+# Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app = Flask(__name__)
+# Initialize Flask app
+app = Flask(__name__, static_folder='.')
 
+# Get port from environment variable (Render will set this)
+port = int(os.environ.get('PORT', 5000))
+
+# Load model with error handling
 try:
     model = SentenceTransformer('paraphrase-MiniLM-L6-v2')
     logger.info("Model loaded successfully")
@@ -48,9 +55,10 @@ documentation_urls = {
     }
 }
 
+# Cache configuration
 doc_cache = {}
 last_fetch_time = None
-CACHE_DURATION = 3600  
+CACHE_DURATION = 3600  # 1 hour cache duration
 
 def fetch_page_content(url, headers=None):
     if not headers:
@@ -65,11 +73,9 @@ def fetch_page_content(url, headers=None):
             response.raise_for_status()
             soup = BeautifulSoup(response.content, 'html.parser')
             
-            # Remove script and style elements
             for element in soup(['script', 'style', 'nav', 'header', 'footer']):
                 element.decompose()
             
-            # Extract text from paragraphs and headings
             content = []
             for elem in soup.find_all(['p', 'h1', 'h2', 'h3', 'h4', 'li']):
                 text = elem.get_text().strip()
@@ -82,13 +88,10 @@ def fetch_page_content(url, headers=None):
             logger.error(f"Attempt {attempt + 1} failed for {url}: {str(e)}")
             if attempt == max_retries - 1:
                 return ""
-            time.sleep(1)  # Wait before retrying
-
+            time.sleep(1)  
 def fetch_documentation():
-    """Fetch and cache documentation from all sources"""
     global last_fetch_time, doc_cache
     
-    # Check if cache is still valid
     if last_fetch_time and time.time() - last_fetch_time < CACHE_DURATION:
         return doc_cache
     
@@ -97,12 +100,10 @@ def fetch_documentation():
         logger.info(f"Fetching documentation for {cdp}")
         content = []
         
-        # Fetch main page
         main_content = fetch_page_content(urls['main'])
         if main_content:
             content.append(main_content)
         
-        # Fetch sub-pages
         for sub_url in urls['sub_pages']:
             sub_content = fetch_page_content(sub_url)
             if sub_content:
@@ -112,7 +113,7 @@ def fetch_documentation():
             new_cache[cdp] = ' '.join(content)
         else:
             logger.warning(f"No content fetched for {cdp}")
-            new_cache[cdp] = doc_cache.get(cdp, "")  # Use cached content if available
+            new_cache[cdp] = doc_cache.get(cdp, "")  
     
     doc_cache = new_cache
     last_fetch_time = time.time()
@@ -159,7 +160,7 @@ def search_documentation(query, docs):
 
 @app.route('/')
 def serve_ui():
-    return send_from_directory('.', 'index.html')
+    return send_from_directory(app.static_folder, 'index.html')
 
 @app.route('/ask', methods=['POST'])
 def ask_question():
@@ -215,18 +216,6 @@ def ask_question():
             "response": "An error occurred while processing your request. Please try again."
         })
 
-paragraph_one = f"""Segment documentation: {documentation_urls['Segment']['main']}, 
-mParticle documentation: {documentation_urls['mParticle']['main']}, 
-Lytics documentation: {documentation_urls['Lytics']['main']}."""
-
-paragraph_two = f"""Zeotap documentation: {documentation_urls['Zeotap']['main']}, 
-Segment sub-pages: {', '.join(documentation_urls['Segment']['sub_pages'])}, 
-mParticle sub-pages: {', '.join(documentation_urls['mParticle']['sub_pages'])}, 
-Lytics sub-pages: {', '.join(documentation_urls['Lytics']['sub_pages'])}, 
-Zeotap sub-pages: {', '.join(documentation_urls['Zeotap']['sub_pages'])}."""
-
-print(paragraph_one)
-print(paragraph_two)
-
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    # Run the app on the specified port
+    app.run(host='0.0.0.0', port=port)
