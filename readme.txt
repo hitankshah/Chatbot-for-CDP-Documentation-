@@ -22,8 +22,8 @@ Installation Steps
 
 **1\. Clone the Repository**
 
-git clone <repository-url>
-cd <repository-folder>
+git clonehttps://github.com/hitankshah/Chatbot-for-CDP-Documentation-
+cd Chatbot-for-CDP-Documentation-
     
 
 **2\. Create a Virtual Environment (Optional but recommended)**
